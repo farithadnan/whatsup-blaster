@@ -178,3 +178,7 @@ chrome-data/
 myenv/
 .chromedriver
 PyWhatKit_DB.txt
+
+## app config
+configs/contacts/*.csv
+configs/media/*
