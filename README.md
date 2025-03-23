@@ -53,6 +53,7 @@ whatsup-blaster/
 │   ├── contacts/            # Folder for storing contact lists
 │   │   ├── ws_contact.csv   # Example contact file
 │   ├── media/               # Folder for storing images/videos (optional)
+│   ├── db/                  # Folder for storing sent log
 │── whatsup-blaster.py       # Main script
 │── requirements.txt         # Dependencies list
 │── README.md                # Project documentation
@@ -87,7 +88,8 @@ whatsup-blaster/
                  {"time": "20:00", "message_count": 30}
              ]
          },
-         "contact_file": "configs/contacts/ws_contact.csv"
+         "contact_file": "configs/contacts/ws_contact.csv",
+         "database_path": "configs/db/whatsup-blaster.db"
      }
      ```
    - `content`: Message text  
@@ -96,7 +98,7 @@ whatsup-blaster/
 
 4. **Run the script:**  
    ```bash
-   python whatsup-blaster.py
+   python main.py
    ```
 
 ## Troubleshooting 🛠
