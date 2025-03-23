@@ -45,6 +45,20 @@ To install Whatsup Blaster, follow these steps:
     pip install -r requirements.txt
     ```
 
+## File & Folder Structure 📁
+```bash
+whatsup-blaster/
+│── configs/
+│   ├── config.json          # Main configuration file
+│   ├── contacts/            # Folder for storing contact lists
+│   │   ├── ws_contact.csv   # Example contact file
+│   ├── media/               # Folder for storing images/videos (optional)
+│── whatsup-blaster.py       # Main script
+│── requirements.txt         # Dependencies list
+│── README.md                # Project documentation
+
+```
+
 ## Usage 📖
 
 1. **Prepare Contact List:**  
