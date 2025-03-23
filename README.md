@@ -25,6 +25,7 @@ If you do not agree with these terms, **do not use this software.**
 - **Supports Media**: Send images along with text messages.
 - **Configurable Settings**: Adjust message content, timing, and recipients using `config.json`.
 - **Random Delays**: Implements delays between messages to reduce the risk of being flagged.
+- **Task Persistence**: Uses SQLite3 to handle interruptions and continue unfinished tasks.
 
 ## Installation ⚙️ 
 
@@ -54,7 +55,9 @@ whatsup-blaster/
 │   │   ├── ws_contact.csv   # Example contact file
 │   ├── media/               # Folder for storing images/videos (optional)
 │   ├── db/                  # Folder for storing sent log
-│── whatsup-blaster.py       # Main script
+│── main.py                  # Main script
+│── database.py              # Script to handle Database
+│── settings.py              # Script to static configuration
 │── requirements.txt         # Dependencies list
 │── README.md                # Project documentation
 
