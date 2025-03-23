@@ -3,8 +3,9 @@
 WhatsUp Blaster is an automation tool that allows you to send bulk WhatsApp messages and schedule them for later. It supports sending text messages as well as media attachments.
 
 ---
-
-## ⚠️ Disclaimer ⚠️
+<center>
+    <h2> ⚠️ Disclaimer ⚠️ </h2>
+</center>
 
 **Use this tool at your own risk.** WhatsApp has strict policies regarding bulk messaging, and using this tool **may result in account suspension or banning.**
 
@@ -25,7 +26,6 @@ If you do not agree with these terms, **do not use this software.**
 - **Supports Media**: Send images along with text messages.
 - **Configurable Settings**: Adjust message content, timing, and recipients using `config.json`.
 - **Random Delays**: Implements delays between messages to reduce the risk of being flagged.
-
 
 ## Installation ⚙️ 
 
@@ -55,6 +55,8 @@ To install Whatsup Blaster, follow these steps:
      +0987654321
      ```
    - Save it in the `configs/contacts` folder.
+   - Row `1` is a header.
+   - All numbers must be put under the `A` column.
 
 2. **Optional: Add Media**  
    - Place images in the `configs/media` folder.
@@ -86,6 +88,6 @@ To install Whatsup Blaster, follow these steps:
 
 ## Troubleshooting 🛠
 
-- **Missing dependencies?**Run pip install -r requirements.txt again.
-- **Incorrect contact file?** Ensure numbers are formatted with + and contain no spaces.
-- **Message not sending?** Check WhatsApp Web is logged in and active.
+- **Missing dependencies?** Run `pip install -r requirements.txt` again.
+- **Incorrect contact file?** Ensure numbers are formatted with a `+` at the front and must only contain characters such as spaces, `-`, `number`, and `+`.
+- **Message not sending?** Check WhatsApp Web is logged in and active on your default browser.
