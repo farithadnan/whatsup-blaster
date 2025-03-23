@@ -1,12 +1,12 @@
 # Whatsup Blaster 
 
-WhatsUp Blaster is an automation tool that allows you to send bulk WhatsApp messages and schedule them for later. It supports sending text messages as well as media attachments.
+WhatsUp Blaster is an automation tool that allows you to schedule WhatsApp messages to be sent at a later time. It supports sending text messages as well as media attachments.
 
 ---
 
  ## ⚠️ Disclaimer ⚠️
 
-**Use this tool at your own risk.** WhatsApp has strict policies regarding bulk messaging, and using this tool **may result in account suspension or banning.**
+**Use this tool at your own risk.** WhatsApp has strict policies regarding automated messaging, and using this tool **may result in account suspension or banning.**
 
 By using Whatsup Blaster, you agree that:
 
@@ -20,7 +20,6 @@ If you do not agree with these terms, **do not use this software.**
 
 ## Features 🌟
 
-- **Bulk Messaging**: Send messages to multiple contacts at once.
 - **Scheduled Messages**: Schedule messages to be sent at a later time.
 - **Supports Media**: Send images along with text messages.
 - **Configurable Settings**: Adjust message content, timing, and recipients using `config.json`.
