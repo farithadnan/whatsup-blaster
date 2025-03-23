@@ -180,5 +180,6 @@ myenv/
 PyWhatKit_DB.txt
 
 ## app config
-configs/contacts/*.csv
+configs/contacts/*
 configs/media/*
+configs/db/*
