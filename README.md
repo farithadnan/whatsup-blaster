@@ -64,7 +64,9 @@ whatsup-blaster/
 
 ## Usage 📖
 
-1. **Prepare Contact List:**  
+1. **Prepare Contact List:**
+    - You can use a script created by ihsanalapsi called [WhatsApp Number Extractor](https://github.com/ihsanalapsi/whatsapp-number-extractor) to extract all numbers in a group. This doesn't cover extracting your saved contacts.
+    - Alternatively, you can use an extension called [WA Contacts Extractor](https://chromewebstore.google.com/detail/dcidojkknfgophlmohhpdlmoiegfbkdd?utm_source=item-share-cb) that can extract both saved contacts and all unsaved contacts in your groups.
    - Create a `.csv` file containing phone numbers in the following format:
      ```
      +1234567890
