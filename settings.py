@@ -89,6 +89,6 @@ class ConfigManager:
             logging.warning(f"Contact file not found: {contact_file}")
 
         if "media_path" in self.config["messages"] and self.config["messages"]["media_path"]:
-            media_path = Path(self.messages["media_path"])
+            media_path = Path(self.config["messages"]["media_path"])
             if not media_path.is_file():
-                raise FileNotFoundError(f"Media file not found: {media_path}")
+                logging.warning(f"Media file not found: {media_path}")

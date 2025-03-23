@@ -7,8 +7,9 @@ import pywhatkit.whats as kit
 
 from tqdm import tqdm
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timedelta
 from settings import ConfigManager
+from database import DatabaseManager
 
 # Logging setup
 logging.basicConfig(
@@ -21,7 +22,7 @@ class WhatsUpBlaster:
         self.config = self.config_manager.config
         self.messages = self.config["messages"]
         self.contacts = self.load_contacts(self.config["contact_file"])
-        self.db_init()
+        self.db = DatabaseManager(self.config["database_path"])
 
     def load_contacts(self, contact_file):
         if not Path(contact_file).is_file():
@@ -46,65 +47,33 @@ class WhatsUpBlaster:
             logging.error(f"Error reading contact file: {e}")
             raise
         
-    def db_init(self):
-        db_path = Path(self.config["database_path"])
-        self.conn = sqlite3.connect(db_path)
-        self.cursor = self.conn.cursor()
-        self.cursor.execute(
-            """
-            CREATE TABLE IF NOT EXISTS messages (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                contact TEXT UNIQUE,
-                status TEXT CHECK(status IN ('pending', 'sent', 'failed')) DEFAULT 'pending'
-            )
-            """
-        )
-
-        self.conn.commit()
-
-    def reset_db(self):
-        logging.info("Resetting database")
-        self.cursor.execute("DELETE FROM messages")
-        self.conn.commit()
-
-    def reset_failed_messages(self):
-        logging.info("Resetting failed messages")
-        self.cursor.execute("UPDATE messages SET status='pending' WHERE status='failed'")
-        self.conn.commit()
-    
-    def was_message_sent(self, contact):
-        self.cursor.execute("SELECT status FROM messages WHERE contact=?", (contact,))
-        result = self.cursor.fetchone()
-        return result and result[0] == "sent"
-    
-    def mark_message_status(self, contact, status):
-        self.cursor.execute(
-            """
-            INSERT INTO messages (contact, status) VALUES (?, ?)
-            ON CONFLICT(contact) DO UPDATE SET status=excluded.status
-            """,
-            (contact, status)
-        )
-        self.conn.commit()
-
-    def send_message(self, message, contact):
-        if self.was_message_sent(contact):
+    def send_message(self, message, contact, dry_run=False):
+        if self.db.was_message_sent(contact):
             logging.info(f"Skipping message to {contact} as it was already sent")
             return
 
         try:
-            target_time = message["time"]
+            now = datetime.now()
+            target_hour, target_minute = map(int, message["time"].split(":"))
+            target_datetime = now.replace(hour=target_hour, minute=target_minute, second=0, microsecond=0)
 
-            while datetime.now().strftime("%H:%M") < target_time:
-                logging.info(f"Waiting for scheduled time: {target_time}")
+            # If target time is in the past, schedule it for tomorrow
+            if target_datetime < now:
+                target_datetime += timedelta(days=1)
+
+            while datetime.now() < target_datetime:
+                logging.info(f"Waiting for scheduled time until: {target_datetime.strftime('%Y-%m-%d %H:%M:%S')}")
                 time.sleep(5)
 
             delay = random.randint(2, 10)
             logging.info(f"Waiting {delay} seconds before sending message")
             time.sleep(delay)
 
-            if "media_path" in message and message["media_path"]:
+            if dry_run:
+                logging.info(f"[DRY RUN] Message to {contact}: {message['content']}")
+                return
 
+            if message.get("media_path"):
                 if message["media_path"] == "" or message["media_path"] == None:
                     logging.info(f"Sending image with caption to {contact}")
                     # kit.sendwhats_image(contact, message["media_path"], message["content"])
@@ -112,14 +81,20 @@ class WhatsUpBlaster:
                     logging.info(f"Sending text message to {contact}")
                     # kit.sendwhatmsg_instantly(contact, message["content"])
 
-            self.mark_message_status(contact, "sent")
+            self.db.mark_message_status(contact, "sent")
             logging.info(f"Message sent to {contact}")
+
+        except sqlite3.OperationalError as e:
+            logging.error(f"Database error: {e}")
+            self.db.mark_message_status(contact, "failed")
         except Exception as e:
             logging.error(f"Error sending message to {contact}: {e}")
-            self.mark_message_status(contact, "failed")
+            self.db.mark_message_status(contact, "failed")
 
-    def blast(self):
-        pending_contacts = [contact for contact in self.contacts if not self.was_message_sent(contact)]
+    def blast(self, dry_run=False):
+        self.db.cursor.execute("SELECT contact FROM messages WHERE status != 'sent'")
+        sent_contacts = {row[0] for row in self.db.cursor.fetchall()}
+        pending_contacts = list(set(self.contacts) - sent_contacts)
 
         for schedule in self.messages["schedule"]:
             send_count = 0
@@ -133,23 +108,24 @@ class WhatsUpBlaster:
                     "time": schedule["time"],
                     "media_path": Path(self.messages["media_path"])
                 }
-                self.send_message(message, contact)
+                self.send_message(message, contact, dry_run)
                 send_count += 1
                 time.sleep(1)
 
             logging.info(f"Finished schedule for time slot: {schedule['time']}")
-            pending_contacts = [c for c in pending_contacts if not self.was_message_sent(c)]
+            pending_contacts = [c for c in pending_contacts if not self.db.was_message_sent(c)]
 
     def run(self):
-        self.blast()
+        self.blast(dry_run=True)
 
 
 if __name__ == "__main__":
     print("Welcome to WhatsUp Blaster!")
     try:
         blaster = WhatsUpBlaster("configs/config.json")
-        # blaster.reset_db()               # Uncomment for full reset
-        blaster.reset_failed_messages()
+        # blaster.db.reset_db()               # Uncomment for full reset
+        blaster.db.reset_failed_messages()
         blaster.run()
+        blaster.db.close()
     except Exception as e:
         logging.error(f"An error occurred: {e}")
