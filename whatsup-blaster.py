@@ -78,12 +78,16 @@ class WhatsUpBlaster:
             logging.info(f"Waiting {delay} seconds before sending message")
             time.sleep(delay)
 
+        
+
             if "media_path" in message and message["media_path"]:
-                logging.info(f"Sending image with caption to {contact}")
-                # whatsApp.sendwhats_image(contact, message["media_path"], message["content"])
-            else:
-                logging.info(f"Sending text message to {contact}")
-                # whatsApp.sendwhatmsg_instantly(contact, message["content"])
+
+                if message["media_path"] == "" or message["media_path"] == None:
+                    logging.info(f"Sending image with caption to {contact}")
+                    # whatsApp.sendwhats_image(contact, message["media_path"], message["content"])
+                else:
+                    logging.info(f"Sending text message to {contact}")
+                    # whatsApp.sendwhatmsg_instantly(contact, message["content"])
 
             logging.info(f"Message sent to {contact}")
         except Exception as e:
